@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heißer Stuhl – Rom kompakt</title>
+  <style>
+    :root {
+      --roman-red: #7f1d1d;
+      --roman-red-dark: #4a0f0f;
+      --gold: #d6a84f;
+      --gold-light: #f5df9d;
+      --marble: #f8f1df;
+      --ink: #24180f;
+      --green: #1f6f43;
+      --blue: #1f4f7a;
+      --shadow: rgba(36, 24, 15, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(214,168,79,0.28), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(127,29,29,0.24), transparent 36%),
+        linear-gradient(135deg, #efe0bd, #f8f1df 45%, #e6cf99);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .app {
+      width: min(1120px, 100%);
+      min-height: auto;
+      background: rgba(248, 241, 223, 0.94);
+      border: 7px double var(--gold);
+      border-radius: 22px;
+      box-shadow: 0 16px 34px var(--shadow);
+      max-height: calc(100vh - 20px);
+      position: relative;
+      overflow: hidden;
+      padding: 14px;
+    }
+
+    .app::before,
+    .app::after {
+      content: "SPQR";
+      position: absolute;
+      font-size: 86px;
+      font-weight: 900;
+      letter-spacing: 7px;
+      color: rgba(127, 29, 29, 0.06);
+      pointer-events: none;
+      transform: rotate(-12deg);
+    }
+
+    .app::before {
+      top: 88px;
+      left: -26px;
+    }
+
+    .app::after {
+      bottom: 54px;
+      right: -6px;
+      transform: rotate(10deg);
+    }
+
+    header {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 10px;
+    }
+
+    .laurel {
+      color: var(--gold);
+      font-size: 24px;
+      letter-spacing: 7px;
+      margin-bottom: 2px;
+      text-shadow: 0 2px 0 #7a4d18;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 4.8vw, 56px);
+      color: var(--roman-red-dark);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      line-height: 0.95;
+      text-shadow: 0 3px 0 var(--gold-light);
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      font-size: clamp(15px, 1.7vw, 20px);
+      color: #61431d;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, #fff8e7, #efdfba);
+      border: 4px solid var(--gold);
+      border-radius: 18px;
+      box-shadow: 0 12px 26px rgba(36, 24, 15, 0.18);
+      padding: 12px;
+    }
+
+    .main-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .team-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--roman-red), var(--roman-red-dark));
+      color: white;
+      border: 3px solid var(--gold);
+    }
+
+    .team-label {
+      font-size: 15px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .team-name {
+      font-size: clamp(26px, 3.4vw, 40px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .team-badge {
+      font-size: clamp(28px, 4vw, 48px);
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,0.25));
+    }
+
+    .word-card {
+      min-height: 145px;
+      border-radius: 18px;
+      border: 4px double var(--roman-red);
+      background:
+        linear-gradient(rgba(255,255,255,0.28), rgba(255,255,255,0.28)),
+        repeating-linear-gradient(90deg, rgba(214,168,79,0.14) 0, rgba(214,168,79,0.14) 18px, rgba(248,241,223,0.2) 18px, rgba(248,241,223,0.2) 36px),
+        #fff5d6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px;
+    }
+
+    .word-card small {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #7a4d18;
+      margin-bottom: 10px;
+    }
+
+    .current-word {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 900;
+      color: var(--roman-red-dark);
+      line-height: 0.98;
+      overflow-wrap: anywhere;
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: 0.9fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #2d1c12;
+      color: var(--gold-light);
+      border-radius: 22px;
+      border: 4px solid var(--gold);
+    }
+
+    .time {
+      font-size: clamp(46px, 7vw, 76px);
+      font-weight: 900;
+      line-height: 0.9;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+    }
+
+    .timer-status {
+      text-align: right;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff8e7;
+    }
+
+    .progress {
+      grid-column: 1 / -1;
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 248, 231, 0.18);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(245, 223, 157, 0.6);
+    }
+
+    .progress-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transition: width 0.25s linear;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    button {
+      font-family: Georgia, "Times New Roman", serif;
+      border: 0;
+      border-radius: 18px;
+      padding: 10px 10px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 6px 0 rgba(36, 24, 15, 0.32);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+    }
+
+    button:hover {
+      filter: brightness(1.06);
+    }
+
+    button:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 rgba(36, 24, 15, 0.32);
+    }
+
+    .start { background: var(--green); }
+    .pause { background: #a16207; }
+    .reset { background: #6b7280; }
+    .next { background: var(--roman-red); }
+    .switch { background: var(--blue); }
+    .point { background: #7c3aed; }
+    .wrong { background: #b91c1c; }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .score {
+      background: #fff4cd;
+      border: 3px solid var(--gold);
+      border-radius: 18px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .score strong {
+      display: block;
+      color: var(--roman-red-dark);
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .score span {
+      display: block;
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 21px;
+      color: var(--roman-red-dark);
+      border-bottom: 3px solid var(--gold);
+      padding-bottom: 8px;
+    }
+
+    .rules ul {
+      margin: 8px 0 0;
+      padding-left: 24px;
+      font-size: 15px;
+      line-height: 1.28;
+      font-weight: 700;
+    }
+
+    .rules li {
+      margin-bottom: 5px;
+    }
+
+    .word-list {
+      max-height: 100px;
+      overflow: auto;
+      padding-right: 6px;
+    }
+
+    .word-list p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #51371d;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: end;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--roman-red-dark);
+    }
+
+    input {
+      border: 3px solid var(--gold);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 900;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #fff8e7;
+      color: var(--ink);
+      width: 100%;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #68471e;
+      position: relative;
+      z-index: 1;
+    }
+
+    .finished {
+      color: #fca5a5 !important;
+      animation: pulse 0.8s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 10px; }
+      .app { padding: 10px; min-height: auto; }
+      .layout { grid-template-columns: 1fr; }
+      .controls { grid-template-columns: 1fr 1fr; }
+      .timer { grid-template-columns: 1fr; text-align: center; }
+      .timer-status { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div class="laurel">✦ ⚔ ✦</div>
+      <h1>Heißer Stuhl</h1>
+      <p class="subtitle">Altes Rom · Caesar · Republik · Karthago</p>
+    </header>
+
+    <section class="layout">
+      <div class="panel main-panel">
+        <div class="team-banner" id="teamBanner">
+          <div>
+            <div class="team-label">Am Zug</div>
+            <div class="team-name" id="teamName">Team Wand</div>
+          </div>
+          <div class="team-badge" id="teamBadge">🏛️</div>
+        </div>
+
+        <div class="word-card">
+          <small>Aktueller Begriff</small>
+          <div class="current-word" id="currentWord">Caesar</div>
+        </div>
+
+        <div class="timer">
+          <div class="time" id="timeDisplay">01:30</div>
+          <div class="timer-status" id="timerStatus">Bereit für die Runde</div>
+          <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="controls">
+          <button class="start" id="startBtn">Start</button>
+          <button class="pause" id="pauseBtn">Pause</button>
+          <button class="reset" id="resetBtn">Timer zurück</button>
+          <button class="next" id="nextBtn">Neuer Begriff</button>
+          <button class="point wide" id="pointBtn">Gelöst: Punkt + Wechsel</button>
+          <button class="switch wide" id="switchBtn">Team wechseln</button>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <div class="panel">
+          <h2>Punktestand</h2>
+          <div class="scoreboard">
+            <div class="score">
+              <strong>Team Wand</strong>
+              <span id="scoreWall">0</span>
+            </div>
+            <div class="score">
+              <strong>Team Fenster</strong>
+              <span id="scoreWindow">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel rules">
+          <h2>Regeln</h2>
+          <ul>
+            <li>Der heiße Stuhl schaut nicht auf die Anzeige.</li>
+            <li>Das Team gibt Hinweise zum Begriff.</li>
+            <li>Das Wort selbst darf nicht genannt werden.</li>
+            <li>Nicht buchstabieren.</li>
+            <li>Keine Reimhinweise.</li>
+            <li>Pro Runde: 90 Sekunden.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h2>Einstellungen</h2>
+          <div class="settings">
+            <label>
+              Sekunden pro Runde
+              <input id="secondsInput" type="number" value="90" min="10" max="300" step="5" />
+            </label>
+            <button class="reset" id="applyTimeBtn">Übernehmen</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Begriffe im Vorrat</h2>
+          <div class="word-list">
+            <p id="wordStock"></p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <div class="footer-note">Tipp: Der Begriff bleibt stehen, bis du „Neuer Begriff“ drückst. Nach „Gelöst“ bekommt das aktive Team einen Punkt und das andere Team ist dran.</div>
+  </main>
+
+  <script>
+    const words = [
+      "Romulus", "Remus", "Wölfin", "Tiber", "Stadtgründung", "Hirte", "König",
+      "Patrizier", "Plebejer", "Ritter", "Sklaven", "Bürger", "Adel", "Senat",
+      "Konsul", "Republik", "Wahl", "Gesetz", "Diktator", "Soldat", "Legionär",
+      "Latein", "Gladiator", "Arena", "Caesar", "Gallien", "Feldherr", "Kleopatra",
+      "Alleinherrschaft", "Kolosseum", "Rom", "Speer", "Ruhm", "Feldzug"
+    ];
+
+    const teams = [
+      { name: "Team Wand", badge: "🏛️", scoreId: "scoreWall", colorA: "#7f1d1d", colorB: "#4a0f0f" },
+      { name: "Team Fenster", badge: "🛡️", scoreId: "scoreWindow", colorA: "#1f4f7a", colorB: "#102f4f" }
+    ];
+
+    let deck = [];
+    let currentTeam = 0;
+    let scores = [0, 0];
+    let totalSeconds = 90;
+    let remainingSeconds = totalSeconds;
+    let timer = null;
+    let running = false;
+
+    const currentWordEl = document.getElementById("currentWord");
+    const timeDisplay = document.getElementById("timeDisplay");
+    const timerStatus = document.getElementById("timerStatus");
+    const progressFill = document.getElementById("progressFill");
+    const teamName = document.getElementById("teamName");
+    const teamBadge = document.getElementById("teamBadge");
+    const teamBanner = document.getElementById("teamBanner");
+    const secondsInput = document.getElementById("secondsInput");
+    const wordStock = document.getElementById("wordStock");
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function refillDeck() {
+      deck = shuffle(words);
+      updateWordStock();
+    }
+
+    function nextWord() {
+      if (deck.length === 0) refillDeck();
+      currentWordEl.textContent = deck.pop();
+      updateWordStock();
+    }
+
+    function updateWordStock() {
+      wordStock.textContent = deck.length > 0
+        ? deck.join(" · ")
+        : "Alle Begriffe wurden gespielt. Beim nächsten Begriff wird neu gemischt.";
+    }
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60).toString().padStart(2, "0");
+      const sec = (seconds % 60).toString().padStart(2, "0");
+      return `${min}:${sec}`;
+    }
+
+    function updateTimerDisplay() {
+      timeDisplay.textContent = formatTime(remainingSeconds);
+      const percentage = Math.max(0, (remainingSeconds / totalSeconds) * 100);
+      progressFill.style.width = `${percentage}%`;
+      if (remainingSeconds <= 0) {
+        timeDisplay.classList.add("finished");
+        timerStatus.textContent = "Zeit abgelaufen!";
+      } else {
+        timeDisplay.classList.remove("finished");
+      }
+    }
+
+    function startTimer() {
+      if (running) return;
+      if (remainingSeconds <= 0) resetTimer();
+      running = true;
+      timerStatus.textContent = "Die Runde läuft";
+      timer = setInterval(() => {
+        remainingSeconds--;
+        updateTimerDisplay();
+        if (remainingSeconds <= 0) {
+          pauseTimer();
+          timerStatus.textContent = "Zeit abgelaufen! Team wechseln oder neuen Begriff starten.";
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      running = false;
+      clearInterval(timer);
+      timer = null;
+      if (remainingSeconds > 0) timerStatus.textContent = "Pausiert";
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      totalSeconds = Math.max(10, Math.min(300, Number(secondsInput.value) || 90));
+      remainingSeconds = totalSeconds;
+      timerStatus.textContent = "Bereit für die Runde";
+      updateTimerDisplay();
+    }
+
+    function updateTeam() {
+      const team = teams[currentTeam];
+      teamName.textContent = team.name;
+      teamBadge.textContent = team.badge;
+      teamBanner.style.background = `linear-gradient(135deg, ${team.colorA}, ${team.colorB})`;
+    }
+
+    function switchTeam() {
+      currentTeam = currentTeam === 0 ? 1 : 0;
+      updateTeam();
+      timerStatus.textContent = "Team gewechselt – Begriff bleibt gleich";
+    }
+
+    function addPointAndSwitch() {
+      scores[currentTeam]++;
+      document.getElementById(teams[currentTeam].scoreId).textContent = scores[currentTeam];
+      resetTimer();
+      switchTeam();
+    }
+
+    document.getElementById("startBtn").addEventListener("click", startTimer);
+    document.getElementById("pauseBtn").addEventListener("click", pauseTimer);
+    document.getElementById("resetBtn").addEventListener("click", resetTimer);
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      resetTimer();
+      nextWord();
+    });
+    document.getElementById("switchBtn").addEventListener("click", () => {
+      resetTimer();
+      switchTeam();
+    });
+    document.getElementById("pointBtn").addEventListener("click", addPointAndSwitch);
+    document.getElementById("applyTimeBtn").addEventListener("click", resetTimer);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        event.preventDefault();
+        running ? pauseTimer() : startTimer();
+      }
+      if (event.key.toLowerCase() === "n") {
+        resetTimer();
+        nextWord();
+      }
+      if (event.key.toLowerCase() === "w") {
+        resetTimer();
+        switchTeam();
+      }
+      if (event.key.toLowerCase() === "p") {
+        addPointAndSwitch();
+      }
+    });
+
+    refillDeck();
+    nextWord();
+    updateTeam();
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
